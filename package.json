@@ -1,0 +1,50 @@
+{
+  "main": "./dist/main.js",
+  "scripts": {
+    "build": "babel api -d dist",
+    "start": "concurrently \"npm run api\" \"cd app && npm start\"",
+    "api": "npm run build && node dist/main.js",
+    "mongo-container": "cd ./docker-compose && docker-compose up -d",
+    "docker:ls": "docker image ls",
+    "docker:ps": "docker container ls",
+    "docker:build": "docker build --file Dockerfile --tag=0xd0a/burn-after-reading .",
+    "docker:run": "docker run -p 3000:3000 -d --name=container0 0xd0a/burn-after-reading",
+    "docker:stop": "docker stop 0xd0a/burn-after-reading",
+    "docker:shell": "docker run -it -p 3000:3000 0xd0a/burn-after-reading bash",
+    "docker:remove-all": "docker rm --force $(docker ps -a -q) && docker rmi --force $(docker images -q)",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@fastify/cors": "^8.1.0",
+    "@fastify/mongodb": "^6.1.0",
+    "@fastify/multipart": "^7.2.0",
+    "aes256": "^1.1.0",
+    "concurrently": "^7.4.0",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "fastify": "^4.8.1",
+    "fastify-file-upload": "^4.0.0",
+    "fastify-plugin": "^4.2.1"
+  },
+  "name": "burn-after-reading-download",
+  "description": "A simple server that will serve files only once.",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/0xd0a/burn-after-reading-download.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/0xd0a/burn-after-reading-download/issues"
+  },
+  "homepage": "https://github.com/0xd0a/burn-after-reading-download#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.19.3",
+    "@babel/core": "^7.19.3",
+    "@babel/preset-env": "^7.19.4",
+    "autoprefixer": "^10.4.12",
+    "postcss": "^8.4.18",
+    "tailwindcss": "^3.1.8"
+  }
+}
