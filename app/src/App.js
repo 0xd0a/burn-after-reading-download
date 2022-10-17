@@ -4,7 +4,7 @@ import DragDropFile from './components/drag-n-drop';
 
 function App() {
   return (
-    <div className="h-full">
+    <div className="h-screen">
         <DragDropFile></DragDropFile>
     </div>
   );
