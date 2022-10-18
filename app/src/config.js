@@ -1,4 +1,7 @@
+// import Dotenv from 'dotenv-webpack'
+
+// new Dotenv()
+
 export default {
-    BACKEND_URL: process.env.API_URL || "http://localhost:3001/upload",
-    
+    API_URL: ("http://localhost:3001" || process.env.REACT_APP_BACKEND_URL )+ "/upload",
 }

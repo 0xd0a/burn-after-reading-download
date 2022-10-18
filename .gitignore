@@ -105,3 +105,4 @@ dist
 
 #docker compose local data
 dev-docker-compose/data
+data/

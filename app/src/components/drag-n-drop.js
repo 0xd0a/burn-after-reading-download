@@ -16,12 +16,11 @@ const Snack = ({ show, onAnimationEnd }) => {
     )
 }
 
-
 export default function DragDropFile() {
     // drag state
     const [dragActive, setDragActive] = React.useState(false);
     const [showSnack, setShowSnack] = React.useState(false);
-    const [link, setLink] = React.useState("http://localhost:3001/downloads/askjgkjhgkjgkjgkjhgkjgkjhgkjhgjgkjhggkhgkjgdf1234");
+    const [link, setLink] = React.useState("");
     // ref
     const inputRef = React.useRef(null);
     const linkCopiedRef = React.useRef(null);
@@ -30,12 +29,13 @@ export default function DragDropFile() {
         try {
             const formData = new FormData();
             //formData.append("selectedFile", file);
+            console.log(config.API_URL)
             Array.from(file).forEach(f => {
                 formData.append('files', f);
             });
             response = await axios({
                 method: "post",
-                url: config.BACKEND_URL,
+                url: config.API_URL,
                 data: formData,
                 headers: { "Content-Type": "multipart/form-data" },
             });
@@ -44,7 +44,7 @@ export default function DragDropFile() {
             console.log(error)
         }
         if (!response.data?.error)
-            setLink(config.BACKEND_URL + "/downloads/" + response.data?.id)
+            setLink(config.API_URL + "/downloads/" + response.data?.id)
     }
     // handle drag events
     const handleDrag = function (e) {
@@ -97,17 +97,17 @@ export default function DragDropFile() {
     return (<>
         {link &&
 
-            <div class="relative z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <div className="relative z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
 
-                <div class="fixed box-border inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+                <div className="fixed box-border inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
 
-                <div class="fixed inset-0 z-10 overflow-y-auto">
-                    <div class="flex min-h-full items-center justify-center p-4 text-center sm:items-center sm:p-0">
+                <div className="fixed inset-0 z-10 overflow-y-auto">
+                    <div className="flex min-h-full items-center justify-center p-4 text-center sm:items-center sm:p-0">
 
-                        <div class="relative transform overflow-hidden rounded-lg bg-gradient-to-tl from-yellow-400 to-orange-400 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-                            <div class="bg-gradient-to-tl from-yellow-400 to-orange-400 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                                <div class="sm:flex sm:items-start">
-                                    <div class="mx-auto flex h-8 sm:w-1/6 m-3 flex-shrink-0 items-center justify-center rounded-full sm:mx-0 ">
+                        <div className="relative transform overflow-hidden rounded-lg bg-gradient-to-tl from-yellow-400 to-orange-400 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                            <div className="bg-gradient-to-tl from-yellow-400 to-orange-400 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                                <div className="sm:flex sm:items-start">
+                                    <div className="mx-auto flex h-8 sm:w-1/6 m-3 flex-shrink-0 items-center justify-center rounded-full sm:mx-0 ">
 
                                         <a href="#" onClick={onCloseClick}>
                                             <svg className="h-12 w-12 m-3 svg-icon" viewBox="0 0 20 20">
@@ -116,10 +116,10 @@ export default function DragDropFile() {
                                         </a>
 
                                     </div>
-                                    <div class="mt-3 text-center mb-3 sm:mt-0 sm:ml-4 sm:w-5/6 sm:text-left">
-                                        <h3 class="text-lg font-medium leading-6 text-slate-100 p-3" id="modal-title">Your one-time link to the file is served</h3>
-                                        <div class="mt-2">
-                                            <p class="text-sm text-gray-500">
+                                    <div className="mt-3 text-center mb-3 sm:mt-0 sm:ml-4 sm:w-5/6 sm:text-left">
+                                        <h3 className="text-lg font-medium leading-6 text-slate-100 p-3" id="modal-title">Your one-time link to the file is served</h3>
+                                        <div className="mt-2">
+                                            <p className="text-sm text-gray-500">
                                                 {/* <span className="text-4xl font-bold  text-red-100">
                         </span> */}
                                                 <p className="">
@@ -137,7 +137,7 @@ export default function DragDropFile() {
                                                         }}
                                                     />
 
-                                                    <p onClick={copyToClipboard} className=" p-3 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 font-mono  m-3 overflow-hidden" readonly autocorrect="off" spellcheck="off">
+                                                    <p onClick={copyToClipboard} className="break-all p-3 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 font-mono  m-3 overflow-hidden">
                                                         {link}
                                                     </p>
                                                 </p>
@@ -157,16 +157,16 @@ export default function DragDropFile() {
             </div>
         }
 
-        <div class="h-screen bg-gradient-to-tl from-green-400 to-indigo-900 w-full py-16 px-4">
-            <div class="h-full flex flex-col items-center justify-center place-content-center">
+        <div className="h-screen bg-gradient-to-tl from-green-400 to-indigo-900 w-full py-16 px-4">
+            <div className="h-full flex flex-col items-center justify-center place-content-center">
 
 
-                <div class="flex items-center flex-col place-content-center border-dashed border-cyan-700 border-0 rounded-full lg:w-1/3  md:w-1/3 w-1/3 h-1/2 p-10 mt-16"
+                <div className="flex items-center flex-col place-content-center border-dashed border-cyan-700 border-0 rounded-full lg:w-1/3  md:w-1/3 w-1/3 h-1/2 p-10 mt-16"
                 >
                     <form onDragEnter={handleDrag} onSubmit={(e) => e.preventDefault()}>
                         <input className="hidden" ref={inputRef} type="file" id="input-file-upload" multiple={true} onChange={handleChange} />
                         <div className="items-center justify-self-center flex flex-col gap-3">
-                            {/* <i class=" text-6xl fas fa-cloud-upload-alt"></i> */}
+                            {/* <i className=" text-6xl fas fa-cloud-upload-alt"></i> */}
 
                             <header className="text-orange-100 focus:outline-none text-4xl font-extrabold  ">Drag & Drop to Upload File</header>
                             <span className="text-orange-200">OR</span>

@@ -7,16 +7,19 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_ROOT_PASSWORD:-rootpassword}
       MONGO_INITDB_DATABASE: downloads
     ports:
-      - 27017:27017
+      - 27018:27017
     volumes:
-      - ./data:/data/db
-      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+      - ./dev-docker-compose/data:/data/db
+      - ./dev-docker-compose/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
   
   app:
-    image: 0xd0a/burn-after-read
+    image: 0xd0a/burn-after-reading:latest
     restart: always
     ports:
+      - 3000:3000
       - 3001:3001
     environment:
-      ADMIN_PASSWORD: ""
-      PORT: 3001
+      API_ADMIN_PASSWORD: ""
+      API_PORT: 3001
+      API_MONGOSERVER: root:rootpassword@mongodb
+      REACT_APP_BACKEND_URL: http://localhost:3001/upload

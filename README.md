@@ -8,6 +8,7 @@ This is an open-source dockerized solution to do just that and be in control of 
 * Stores data in MongoDB
 * Deployed with a container (on any cloud of your preference)
 
+![Burn after reading interface](screenshot/screenshot.jpg)
 ## Build and run using Docker out-of-the-box
 
 ```

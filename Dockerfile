@@ -1,4 +1,4 @@
-FROM node:18
+FROM node:18-alpine
 
 WORKDIR /code
 COPY package*.json ./
@@ -11,4 +11,6 @@ ENV NODE_ENV production
 ENV PORT 3000
 
 EXPOSE 3000
-CMD [ “node”, “server.js” ]
+EXPOSE 3001
+
+CMD [ "npm", "run", "serve" ]

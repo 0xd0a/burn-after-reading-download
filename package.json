@@ -3,11 +3,12 @@
   "scripts": {
     "build": "babel api -d dist",
     "start": "concurrently \"npm run api\" \"cd app && npm start\"",
+    "serve": "concurrently \"node dist/main.js\" \"npx serve -s app/build\"",
     "api": "npm run build && node dist/main.js",
     "mongo-container": "cd ./docker-compose && docker-compose up -d",
     "docker:ls": "docker image ls",
     "docker:ps": "docker container ls",
-    "docker:build": "docker build --file Dockerfile --tag=0xd0a/burn-after-reading .",
+    "docker:build": "npm run build && cd app && npm run build && cd .. && docker build --file Dockerfile --tag=0xd0a/burn-after-reading .",
     "docker:run": "docker run -p 3000:3000 -d --name=container0 0xd0a/burn-after-reading",
     "docker:stop": "docker stop 0xd0a/burn-after-reading",
     "docker:shell": "docker run -it -p 3000:3000 0xd0a/burn-after-reading bash",
@@ -20,11 +21,12 @@
     "@fastify/multipart": "^7.2.0",
     "aes256": "^1.1.0",
     "concurrently": "^7.4.0",
-    "dotenv": "^16.0.3",
+    "dotenv-webpack": "^8.0.1",
     "express": "^4.18.2",
     "fastify": "^4.8.1",
     "fastify-file-upload": "^4.0.0",
-    "fastify-plugin": "^4.2.1"
+    "fastify-plugin": "^4.2.1",
+    "serve": "^14.0.1"
   },
   "name": "burn-after-reading-download",
   "description": "A simple server that will serve files only once.",
