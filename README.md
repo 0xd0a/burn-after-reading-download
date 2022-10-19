@@ -13,6 +13,7 @@ This is an open-source dockerized solution to do just that and be in control of 
 
 ```
 npm run docker:build
+docker-compose up -d
 ```
 ----
 ## Run (dev):

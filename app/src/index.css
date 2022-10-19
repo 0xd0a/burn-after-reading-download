@@ -21,7 +21,7 @@ code {
 
 .my-snack.show {
   visibility: visible;
-  animation: fadein 1s, fadeout 1s 4s;
+  animation: fadein 1s, fadeout 1s 2s;
   animation-play-state: running;
 }
 

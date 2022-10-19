@@ -2,16 +2,17 @@ import React from 'react'
 import axios from 'axios'
 import config from '../config'
 
-const Snack = ({ show, onAnimationEnd }) => {
+const Snack = (props) => {
+    //show, classes, onAnimationEnd
     return (
         <div
-            className={`my-snack ${show ? 'show' : 'hidden'}`}
+            className={`${props.classes} ${props.show ? 'show' : 'hidden'}`}
             onAnimationEnd={(e) => {
                 if (e.animationName === 'fadeout') {
-                    onAnimationEnd(e)
+                    props.onAnimationEnd(e)
                 }
             }}>
-            Link copied
+            {props.children}
         </div>
     )
 }
@@ -21,9 +22,13 @@ export default function DragDropFile() {
     const [dragActive, setDragActive] = React.useState(false);
     const [showSnack, setShowSnack] = React.useState(false);
     const [link, setLink] = React.useState("");
+    const [error, setError] = React.useState("Can't connect");
+
     // ref
     const inputRef = React.useRef(null);
     const linkCopiedRef = React.useRef(null);
+    const errorRef = React.useRef(null);
+
     let response = ''
     const handleFiles = async (file) => {
         try {
@@ -42,8 +47,10 @@ export default function DragDropFile() {
 
         } catch (error) {
             console.log(error)
+            setError('Network error')
+            return
         }
-        if (!response.data?.error)
+        if (response.data && !response.data?.error)
             setLink(config.API_URL + "/downloads/" + response.data?.id)
     }
     // handle drag events
@@ -91,10 +98,60 @@ export default function DragDropFile() {
     const showSnackToggle = () => {
         setShowSnack(true);
     }
+
+    const errorToggle = (e) => {
+        setError(e);
+        console.log()
+        //errorRef.current.removeClass('-mb-12')
+        //errorRef.current.addClass('mb-12')
+        setTimeout(()=>{
+            //errorRef.current.addClass('-mb-12')
+            //errorRef.current.removeClass('mb-12')
+
+        },2000)
+    }
+
     const getShortLink = (l) => {
         return l.length > 37 ? (l.substring(0, 25) + '...' + l.slice(-10)) : l
     }
+    // Update price
+    React.useEffect(() => {
+        setInterval(errorToggle(''), 20000);
+    }, []);
+
+    
     return (<>
+        {/* {error && 
+            <div className="w-full absolute z-10 right-0 h-full overflow-x-hidden transform translate-x-0 transition ease-in-out duration-700" id="notification">
+            <div className="2xl:w-4/12 bg-gray-50 h-screen overflow-y-auto p-8 absolute right-0">
+                <div className="flex items-center justify-between">
+                    {error}
+                </div>
+                </div>
+                </div>
+                
+        } */}
+        {error && 
+        
+            <Snack
+                show={error}
+                classes="my-snack bg-red-800 text-slate-200 dark:bg-gray-900 shadow-xl h-12 flex items-stretch fixed m-auto inset-0 z-50 transition-all duration-150 ease-in-out mb-12 w-70"
+                onAnimationEnd={(e) => {
+                    setError(false)
+                }}
+            >
+                <div class="flex items-center p-4">
+                <svg class="svg-icon" viewBox="0 0 20 20">
+							<path fill="none" d="M13.864,6.136c-0.22-0.219-0.576-0.219-0.795,0L10,9.206l-3.07-3.07c-0.219-0.219-0.575-0.219-0.795,0
+								c-0.219,0.22-0.219,0.576,0,0.795L9.205,10l-3.07,3.07c-0.219,0.219-0.219,0.574,0,0.794c0.22,0.22,0.576,0.22,0.795,0L10,10.795
+								l3.069,3.069c0.219,0.22,0.575,0.22,0.795,0c0.219-0.22,0.219-0.575,0-0.794L10.794,10l3.07-3.07
+								C14.083,6.711,14.083,6.355,13.864,6.136z M10,0.792c-5.086,0-9.208,4.123-9.208,9.208c0,5.085,4.123,9.208,9.208,9.208
+								s9.208-4.122,9.208-9.208C19.208,4.915,15.086,0.792,10,0.792z M10,18.058c-4.451,0-8.057-3.607-8.057-8.057
+								c0-4.451,3.606-8.057,8.057-8.057c4.449,0,8.058,3.606,8.058,8.057C18.058,14.45,14.449,18.058,10,18.058z"></path>
+						</svg>
+                <p class="ml-2 dark:text-gray-50">{error}</p></div>
+            </Snack>
+        }
         {link &&
 
             <div className="relative z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
@@ -132,10 +189,11 @@ export default function DragDropFile() {
                              </svg> */}
                                                     <Snack
                                                         show={showSnack}
+                                                        classes="my-snack"
                                                         onAnimationEnd={(e) => {
                                                             setShowSnack(false)
                                                         }}
-                                                    />
+                                                    > Link Copied </Snack>
 
                                                     <p onClick={copyToClipboard} className="break-all p-3 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 font-mono  m-3 overflow-hidden">
                                                         {link}
