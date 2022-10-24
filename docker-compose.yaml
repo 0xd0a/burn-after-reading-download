@@ -23,3 +23,4 @@ services:
       API_PORT: 3001
       API_MONGOSERVER: root:rootpassword@mongodb
       REACT_APP_BACKEND_URL: http://localhost:3001/upload
+      REACT_APP_SELF_URL: http://localhost:3000

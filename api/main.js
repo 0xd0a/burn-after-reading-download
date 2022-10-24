@@ -3,7 +3,6 @@ import dbConnector from './db-connector'
 import downloadRoute from './routes/download'
 import uploadRoute from './routes/upload'
 import 'dotenv/config'
-// import fileUpload from 'fastify-file-upload'
 import fileUpload from '@fastify/multipart'
 import cors from '@fastify/cors'
 
@@ -11,14 +10,13 @@ const fastify = Fastify({
   logger: true
 })
 
-
 fastify.register(cors, {})
 
 // Register an upload and limit it
  fastify.register(fileUpload, {
   limits: {
     fieldNameSize: 100, // Max field name size in bytes
-    fieldSize: 100,     // Max field value size in bytes
+    //fieldSize: 100,     // Max field value size in bytes
     fields: 10,         // Max number of non-file fields
     fileSize: 10000000,  // For multipart forms, the max file size in bytes
     files: 1,           // Max number of file fields

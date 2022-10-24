@@ -8,14 +8,9 @@ export default async function uploadRoute(fastify, options) {
         let data
         try {
             data = await request.file()
-            //const data=await iterator.next()
             
             buffer=await data.toBuffer()
-            // for await (const part of iterator) {
-            //     buffer = await data.toBuffer() // this only supports small files
-            // }
         } catch (error) {
-            console.log(error)
             reply.send({error:true, message: error.toString()})
             return
         }
@@ -26,6 +21,7 @@ export default async function uploadRoute(fastify, options) {
             status:0,
             type: "burnafterread", 
             filename: data.filename,
+            iv: data.fields.iv.value || '',
             text: buffer
         } ) 
         if(!insertResult.acknowledged) {
@@ -34,5 +30,15 @@ export default async function uploadRoute(fastify, options) {
         }
         reply.send({error:false, id:insertResult.insertedId})
         
+    })
+    fastify.get('/get_info/:id', async (request, reply)=> {
+        let found 
+        try{
+            found=await collection.findOne({id: request.params.id})
+        } catch (e) {
+            return
+        }
+
+        reply.send({iv:found?.iv,filename:found?.filename})
     })
 }

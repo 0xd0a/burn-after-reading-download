@@ -7,7 +7,6 @@ import config from './config'
  * @param {Object} options
  */
 async function dbConnector (fastify, options) {
-  console.log("MONGO SERVER URL ",config.MONGOSERVER)
   fastify.register(fastifyMongo, {
     url: config.MONGOSERVER
   })

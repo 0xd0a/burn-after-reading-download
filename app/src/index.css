@@ -85,3 +85,7 @@ code {
   bottom: 0px;
   left: 0px;
 }
+
+input[type='password'] {
+  font-family: Verdana;
+}

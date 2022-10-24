@@ -1,6 +1,12 @@
 import React from 'react'
 import axios from 'axios'
 import config from '../config'
+import { useSelector, useDispatch } from 'react-redux'
+import { setPassword } from '../slices/passSlice'
+import PasswordModal from './PasswordModal'
+import EncryptFile from './EncryptFile'
+import { hashSha256, uint8tohex } from '../utils/hex'
+import { padKey } from '../utils/hex'
 
 const Snack = (props) => {
     //show, classes, onAnimationEnd
@@ -22,28 +28,39 @@ export default function DragDropFile() {
     const [dragActive, setDragActive] = React.useState(false);
     const [showSnack, setShowSnack] = React.useState(false);
     const [link, setLink] = React.useState("");
-    const [error, setError] = React.useState("Can't connect");
+    const [error, setError] = React.useState("");
+    const [file, setFile] = React.useState("");
+    const [passwordModalTrigger, setPasswordModalTrigger] = React.useState(false)
+
+    const password = useSelector((state) => state.password.value)
+    const dispatch = useDispatch()
 
     // ref
     const inputRef = React.useRef(null);
-    const linkCopiedRef = React.useRef(null);
-    const errorRef = React.useRef(null);
 
     let response = ''
+
     const handleFiles = async (file) => {
+        setFile(file)
+        setPasswordModalTrigger(true)
+    }
+
+    const handleFilesFinal = async (key) => {
         try {
             const formData = new FormData();
-            //formData.append("selectedFile", file);
-            console.log(config.API_URL)
-            Array.from(file).forEach(f => {
-                formData.append('files', f);
-            });
+            let encryptedResult = await EncryptFile(file[0], key)
+
+            let BlobEncrypted = new File([encryptedResult.encryptedFile], file[0].name, { type: 'application/octet-binary' });
+
+            formData.append('iv', uint8tohex(encryptedResult.iv))
+            formData.append('file', BlobEncrypted)
             response = await axios({
                 method: "post",
-                url: config.API_URL,
+                url: config.API_URL + "/upload",
                 data: formData,
                 headers: { "Content-Type": "multipart/form-data" },
             });
+            if (response.error) throw (response.message)
 
         } catch (error) {
             console.log(error)
@@ -51,8 +68,9 @@ export default function DragDropFile() {
             return
         }
         if (response.data && !response.data?.error)
-            setLink(config.API_URL + "/downloads/" + response.data?.id)
+            setLink(config.SELF_URL + "/download/?id=" + response.data?.id)
     }
+
     // handle drag events
     const handleDrag = function (e) {
         e.preventDefault();
@@ -71,7 +89,6 @@ export default function DragDropFile() {
         setDragActive(false);
         if (e.dataTransfer.files && e.dataTransfer.files[0]) {
             handleFiles(e.dataTransfer.files);
-            console.log(e.dataTransfer.files)
         }
     };
 
@@ -101,38 +118,27 @@ export default function DragDropFile() {
 
     const errorToggle = (e) => {
         setError(e);
-        console.log()
+
         //errorRef.current.removeClass('-mb-12')
         //errorRef.current.addClass('mb-12')
-        setTimeout(()=>{
+        setTimeout(() => {
             //errorRef.current.addClass('-mb-12')
             //errorRef.current.removeClass('mb-12')
-
-        },2000)
+        }, 2000)
+    }
+    const onPasswordInput= async (p) => {
+        setPasswordModalTrigger(false)
+        // upload file
+        await handleFilesFinal(await hashSha256(p))
     }
 
-    const getShortLink = (l) => {
-        return l.length > 37 ? (l.substring(0, 25) + '...' + l.slice(-10)) : l
-    }
-    // Update price
-    React.useEffect(() => {
-        setInterval(errorToggle(''), 20000);
-    }, []);
 
-    
     return (<>
-        {/* {error && 
-            <div className="w-full absolute z-10 right-0 h-full overflow-x-hidden transform translate-x-0 transition ease-in-out duration-700" id="notification">
-            <div className="2xl:w-4/12 bg-gray-50 h-screen overflow-y-auto p-8 absolute right-0">
-                <div className="flex items-center justify-between">
-                    {error}
-                </div>
-                </div>
-                </div>
-                
-        } */}
-        {error && 
-        
+        {passwordModalTrigger && 
+            <PasswordModal title="Create password" close={setPasswordModalTrigger} click={onPasswordInput}></PasswordModal>
+        } 
+
+        {error &&
             <Snack
                 show={error}
                 classes="my-snack bg-red-800 text-slate-200 dark:bg-gray-900 shadow-xl h-12 flex items-stretch fixed m-auto inset-0 z-50 transition-all duration-150 ease-in-out mb-12 w-70"
@@ -141,15 +147,15 @@ export default function DragDropFile() {
                 }}
             >
                 <div class="flex items-center p-4">
-                <svg class="svg-icon" viewBox="0 0 20 20">
-							<path fill="none" d="M13.864,6.136c-0.22-0.219-0.576-0.219-0.795,0L10,9.206l-3.07-3.07c-0.219-0.219-0.575-0.219-0.795,0
+                    <svg class="svg-icon" viewBox="0 0 20 20">
+                        <path fill="none" d="M13.864,6.136c-0.22-0.219-0.576-0.219-0.795,0L10,9.206l-3.07-3.07c-0.219-0.219-0.575-0.219-0.795,0
 								c-0.219,0.22-0.219,0.576,0,0.795L9.205,10l-3.07,3.07c-0.219,0.219-0.219,0.574,0,0.794c0.22,0.22,0.576,0.22,0.795,0L10,10.795
 								l3.069,3.069c0.219,0.22,0.575,0.22,0.795,0c0.219-0.22,0.219-0.575,0-0.794L10.794,10l3.07-3.07
 								C14.083,6.711,14.083,6.355,13.864,6.136z M10,0.792c-5.086,0-9.208,4.123-9.208,9.208c0,5.085,4.123,9.208,9.208,9.208
 								s9.208-4.122,9.208-9.208C19.208,4.915,15.086,0.792,10,0.792z M10,18.058c-4.451,0-8.057-3.607-8.057-8.057
 								c0-4.451,3.606-8.057,8.057-8.057c4.449,0,8.058,3.606,8.058,8.057C18.058,14.45,14.449,18.058,10,18.058z"></path>
-						</svg>
-                <p class="ml-2 dark:text-gray-50">{error}</p></div>
+                    </svg>
+                    <p class="ml-2 dark:text-gray-50">{error}</p></div>
             </Snack>
         }
         {link &&
@@ -177,16 +183,9 @@ export default function DragDropFile() {
                                         <h3 className="text-lg font-medium leading-6 text-slate-100 p-3" id="modal-title">Your one-time link to the file is served</h3>
                                         <div className="mt-2">
                                             <p className="text-sm text-gray-500">
-                                                {/* <span className="text-4xl font-bold  text-red-100">
-                        </span> */}
+
                                                 <p className="">
-                                                    {/* <svg className="svg-icon w-7 h-7 fill-slate-300 active:bg-red-500 absolute mr-8 -m-2 transform right-1" onClick={copyToClipboard} viewBox="0 0 20 20">
-                                 <path  d="M18.378,1.062H3.855c-0.309,0-0.559,0.25-0.559,0.559c0,0.309,0.25,0.559,0.559,0.559h13.964v13.964
-			 					c0,0.309,0.25,0.559,0.559,0.559c0.31,0,0.56-0.25,0.56-0.559V1.621C18.938,1.312,18.688,1.062,18.378,1.062z M16.144,3.296H1.621
-			 					c-0.309,0-0.559,0.25-0.559,0.559v14.523c0,0.31,0.25,0.56,0.559,0.56h14.523c0.309,0,0.559-0.25,0.559-0.56V3.855
-			 					C16.702,3.546,16.452,3.296,16.144,3.296z M15.586,17.262c0,0.31-0.25,0.558-0.56,0.558H2.738c-0.309,0-0.559-0.248-0.559-0.558
-			 					V4.972c0-0.309,0.25-0.559,0.559-0.559h12.289c0.31,0,0.56,0.25,0.56,0.559V17.262z"></path>
-                             </svg> */}
+
                                                     <Snack
                                                         show={showSnack}
                                                         classes="my-snack"
@@ -208,7 +207,7 @@ export default function DragDropFile() {
                             <div>
 
                             </div>
-                            
+
                         </div>
                     </div>
                 </div>

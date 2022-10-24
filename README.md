@@ -7,6 +7,7 @@ This is an open-source dockerized solution to do just that and be in control of 
 * Includes a GUI to upload files (austere and ascetic as a russian soul)
 * Stores data in MongoDB
 * Deployed with a container (on any cloud of your preference)
+* Data is protected with a password with AES encryption
 
 ![Burn after reading interface](screenshot/screenshot.jpg)
 ## Build and run using Docker out-of-the-box
@@ -19,8 +20,12 @@ docker-compose up -d
 ## Run (dev):
 ## Mongo DB DEV container 
 ./dev-docker-compose/ holds a config to start mongodb container for dev environment 
-
-## Running in dev
+```
+npm run mongo-container
+npm start
+```
+---
+## Developing
 Install deps:
 ```
 npm i
