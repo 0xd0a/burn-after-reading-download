@@ -20,9 +20,16 @@
             "program": "${workspaceFolder}",
             "runtimeExecutable": "npm",
             "runtimeArgs": [
-                "run-script", "start"
-            ],
+                "run-script",
+                "start"
+            ]
+        },
+        {
+            "name": "Attach to Node Functions",
+            "type": "node",
+            "request": "attach",
+            "port": 9229,
+            "preLaunchTask": "func: host start"
         }
-
     ]
 }

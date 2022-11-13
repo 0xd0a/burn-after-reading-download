@@ -1,5 +1,5 @@
 import Fastify from 'fastify'
-import dbConnector from './db-connector'
+import dbConnector from './db/db-connector'
 import downloadRoute from './routes/download'
 import uploadRoute from './routes/upload'
 import 'dotenv/config'

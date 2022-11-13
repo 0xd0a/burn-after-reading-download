@@ -1,11 +1,7 @@
 import { Readable } from 'stream'
 
 async function routes(fastify, options) {
-    const collection = fastify.mongo.db.collection('downloads')
-
-    fastify.get('/', async (request, reply) => {
-        return { hello: 'world' }
-    })
+    const collection = fastify.mongo.client.db('downloads').collection('downloads')
 
     fastify.get('/downloads/:id', async (request, reply) => {
         const result = await collection.findOne({ id: request.params.id, status: 0, type: "burnafterread" })

@@ -1,7 +1,7 @@
 import { genHexId } from "../utils/genId"
 
 export default async function uploadRoute(fastify, options) {
-    const collection = fastify.mongo.db.collection('downloads')
+    const collection = fastify.mongo.client.db('downloads').collection('downloads')
 
     fastify.post('/upload', async (request, reply) => {
         let buffer
