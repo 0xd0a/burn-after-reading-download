@@ -1,18 +1,17 @@
-import React from "react";
-import axios from "axios";
-import config from "../config";
-// import { useSelector, useDispatch } from "react-redux";
-import PasswordModal from "./PasswordModal";
-import EncryptFile from "./EncryptFile";
-import { hashSha256, uint8tohex } from "../utils/hex";
+import React from 'react';
+import axios from 'axios';
+import config from '../config';
+import PasswordModal from './PasswordModal';
+import EncryptFile from './EncryptFile';
+import { hashSha256, uint8tohex } from '../utils/hex';
 
-const Snack = (props) => {
+const Snack = props => {
   //show, classes, onAnimationEnd
   return (
     <div
-      className={`${props.classes} ${props.show ? "show" : "hidden"}`}
-      onAnimationEnd={(e) => {
-        if (e.animationName === "fadeout") {
+      className={`${props.classes} ${props.show ? 'show' : 'hidden'}`}
+      onAnimationEnd={e => {
+        if (e.animationName === 'fadeout') {
           props.onAnimationEnd(e);
         }
       }}
@@ -26,9 +25,9 @@ export default function DragDropFile() {
   // drag state
   const [dragActive, setDragActive] = React.useState(false);
   const [showSnack, setShowSnack] = React.useState(false);
-  const [link, setLink] = React.useState("");
-  const [error, setError] = React.useState("");
-  const [file, setFile] = React.useState("");
+  const [link, setLink] = React.useState('');
+  const [error, setError] = React.useState('');
+  const [file, setFile] = React.useState('');
   const [passwordModalTrigger, setPasswordModalTrigger] = React.useState(false);
 
   // const password = useSelector((state) => state.password.value)
@@ -37,49 +36,47 @@ export default function DragDropFile() {
   // ref
   const inputRef = React.useRef(null);
 
-  let response = "";
+  let response = '';
 
-  const handleFiles = async (file) => {
+  const handleFiles = async file => {
     setFile(file);
     setPasswordModalTrigger(true);
   };
 
-  const handleFilesFinal = async (key) => {
+  const handleFilesFinal = async key => {
     try {
       const formData = new FormData();
       let encryptedResult = await EncryptFile(file[0], key);
 
-      let BlobEncrypted = new File(
-        [encryptedResult.encryptedFile],
-        file[0].name,
-        { type: "application/octet-binary" }
-      );
+      let BlobEncrypted = new File([encryptedResult.encryptedFile], file[0].name, {
+        type: 'application/octet-binary'
+      });
 
-      formData.append("iv", uint8tohex(encryptedResult.iv));
-      formData.append("file", BlobEncrypted);
+      formData.append('iv', uint8tohex(encryptedResult.iv));
+      formData.append('file', BlobEncrypted);
       response = await axios({
-        method: "post",
-        url: config.API_URL + "/upload",
+        method: 'post',
+        url: config.API_URL + '/upload',
         data: formData,
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: { 'Content-Type': 'multipart/form-data' }
       });
       if (response.error) throw response.message;
     } catch (error) {
       console.log(error);
-      setError("Network error");
+      setError('Network error');
       return;
     }
     if (response.data && !response.data?.error)
-      setLink(config.SELF_URL + "/download/?id=" + response.data?.id);
+      setLink(config.SELF_URL + '/download/?id=' + response.data?.id);
   };
 
   // handle drag events
   const handleDrag = function (e) {
     e.preventDefault();
     e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") {
+    if (e.type === 'dragenter' || e.type === 'dragover') {
       setDragActive(true);
-    } else if (e.type === "dragleave") {
+    } else if (e.type === 'dragleave') {
       setDragActive(false);
     }
   };
@@ -108,7 +105,7 @@ export default function DragDropFile() {
   };
 
   const onCloseClick = () => {
-    setLink("");
+    setLink('');
     setShowSnack(false);
   };
 
@@ -121,7 +118,7 @@ export default function DragDropFile() {
     setShowSnack(true);
   };
 
-  const onPasswordInput = async (p) => {
+  const onPasswordInput = async p => {
     setPasswordModalTrigger(false);
     // upload file
     await handleFilesFinal(await hashSha256(p));
@@ -141,7 +138,7 @@ export default function DragDropFile() {
         <Snack
           show={error}
           classes="my-snack bg-red-800 text-slate-200 dark:bg-gray-900 shadow-xl h-12 flex items-stretch fixed m-auto inset-0 z-50 transition-all duration-150 ease-in-out mb-12 w-70"
-          onAnimationEnd={(e) => {
+          onAnimationEnd={e => {
             setError(false);
           }}
         >
@@ -177,10 +174,7 @@ export default function DragDropFile() {
                   <div className="sm:flex sm:items-start">
                     <div className="mx-auto flex h-8 sm:w-1/6 m-3 flex-shrink-0 items-center justify-center rounded-full sm:mx-0 ">
                       <button onClick={onCloseClick}>
-                        <svg
-                          className="h-12 w-12 m-3 svg-icon"
-                          viewBox="0 0 20 20"
-                        >
+                        <svg className="h-12 w-12 m-3 svg-icon" viewBox="0 0 20 20">
                           <path
                             fill="#ffffff"
                             d="M15.898,4.045c-0.271-0.272-0.713-0.272-0.986,0l-4.71,4.711L5.493,4.045c-0.272-0.272-0.714-0.272-0.986,0s-0.272,0.714,0,0.986l4.709,4.711l-4.71,4.711c-0.272,0.271-0.272,0.713,0,0.986c0.136,0.136,0.314,0.203,0.492,0.203c0.179,0,0.357-0.067,0.493-0.203l4.711-4.711l4.71,4.711c0.137,0.136,0.314,0.203,0.494,0.203c0.178,0,0.355-0.067,0.492-0.203c0.273-0.273,0.273-0.715,0-0.986l-4.711-4.711l4.711-4.711C16.172,4.759,16.172,4.317,15.898,4.045z"
@@ -201,12 +195,11 @@ export default function DragDropFile() {
                             <Snack
                               show={showSnack}
                               classes="my-snack"
-                              onAnimationEnd={(e) => {
+                              onAnimationEnd={e => {
                                 setShowSnack(false);
                               }}
                             >
-                              {" "}
-                              Link Copied{" "}
+                              Link Copied
                             </Snack>
 
                             <p
@@ -231,7 +224,7 @@ export default function DragDropFile() {
       <div className="h-screen bg-gradient-to-tl from-green-400 to-indigo-900 w-full py-16 px-4">
         <div className="h-full flex flex-col items-center justify-center place-content-center">
           <div className="flex items-center flex-col place-content-center border-dashed border-cyan-700 border-0 rounded-full lg:w-1/3  md:w-1/3 w-1/3 h-1/2 p-10 mt-16">
-            <form onDragEnter={handleDrag} onSubmit={(e) => e.preventDefault()}>
+            <form onDragEnter={handleDrag} onSubmit={e => e.preventDefault()}>
               <input
                 className="hidden"
                 ref={inputRef}

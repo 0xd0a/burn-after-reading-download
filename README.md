@@ -25,6 +25,10 @@ npm run mongo-container
 npm start
 ```
 ---
+## Install (AZURE Static Apps)
+1) Create a static app
+2) It will create a pipeline that will sit in .github/workflows (check paths and "build" folder)
+3) Push to branch main and it will automagically deploy
 ## Developing
 Install deps:
 ```

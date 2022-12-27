@@ -1,21 +1,12 @@
 const fileEncrypt = (file, key, iv) => {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     let reader = new FileReader();
-    // eslint-disable-next-line no-unused-vars
-    // let encryptedReader
     reader.onload = function (e) {
       let data = e.target.result;
-
-      // encryptedReader =
       crypto.subtle
-        .importKey("raw", Uint8Array.from(key), "AES-CBC", false, [
-          "encrypt",
-          "decrypt",
-        ])
-        .then((key) =>
-          crypto.subtle.encrypt({ name: "AES-CBC", iv }, key, data)
-        )
-        .then((encrypted) => {
+        .importKey('raw', Uint8Array.from(key), 'AES-CBC', false, ['encrypt', 'decrypt'])
+        .then(key => crypto.subtle.encrypt({ name: 'AES-CBC', iv }, key, data))
+        .then(encrypted => {
           resolve(encrypted);
         })
         .catch(console.error);

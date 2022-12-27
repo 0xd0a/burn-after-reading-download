@@ -1,7 +1,7 @@
-import "./App.css";
-import DragDropFile from "./components/drag-n-drop";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import DownloadScreen from "./components/DownloadScreen.js";
+import './App.css';
+import DragDropFile from './components/drag-n-drop';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import DownloadScreen from './components/DownloadScreen.js';
 
 function App() {
   return (

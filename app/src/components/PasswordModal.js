@@ -1,11 +1,11 @@
-import { useSelector, useDispatch } from "react-redux";
-import { setPassword } from "../slices/passSlice";
+import { useSelector, useDispatch } from 'react-redux';
+import { setPassword } from '../slices/passSlice';
 
 export default function PasswordModal(props) {
-  const password = useSelector((state) => state.password.value);
+  const password = useSelector(state => state.password.value);
   const dispatch = useDispatch();
 
-  const onClick = (e) => {
+  const onClick = e => {
     dispatch(setPassword(e.target.value));
   };
 
@@ -15,12 +15,7 @@ export default function PasswordModal(props) {
 
   return (
     <>
-      <div
-        className=" relative z-10"
-        aria-labelledby="modal-title"
-        role="dialog"
-        aria-modal="true"
-      >
+      <div className=" relative z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
 
         <div className="fixed inset-0 z-10 overflow-y-auto ">
